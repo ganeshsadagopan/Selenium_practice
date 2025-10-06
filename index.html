@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+
   <title>Ganesh Teaching Studio</title>
   <style>
     /* 🌍 Global Reset */
@@ -95,7 +96,103 @@
     a:hover {
       text-decoration: underline;
     }
+    .multi-selectDropdown{
+    margin-bottom: 20px;
+  }
 
+  .dropdown {
+    position: relative;
+    width: 320px;
+  }
+
+  /* Container that looks like input box */
+  .dropdown-toggle {
+    width: 100%;
+    min-height: 40px;
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    flex-wrap: wrap; /* allow multiple tags side by side */
+    align-items: center;
+    gap: 5px;
+    background: #fff;
+    overflow-x: auto;
+  }
+
+  .dropdown-toggle span.caret {
+    margin-left: auto;
+  }
+
+  /* Container for tags */
+  #selectedTags {
+    display: flex;
+    flex-wrap: wrap; /* horizontal alignment + wrap if overflow */
+    gap: 5px;
+    align-items: center;
+  }
+
+  .tag {
+    background: #2575fc;
+    color: #fff;
+    padding: 3px 7px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+  }
+
+  .tag button {
+    background: none;
+    border: none;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+
+  .dropdown-menu {
+    position: absolute;
+    top: calc(100% + 5px);
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+    max-height: 180px;
+    overflow-y: auto;
+    display: none;
+    z-index: 10;
+  }
+
+  .dropdown.open .dropdown-menu {
+    display: block;
+  }
+
+  .dropdown-menu div {
+    padding: 8px 10px;
+    cursor: pointer;
+  }
+
+  .dropdown-menu div:hover {
+    background: #f0f0f0;
+  }
+
+  .clear-btn {
+    margin-top: 10px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    background: #ff4b5c;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .clear-btn:hover {
+    background: #e63946;
+  }
     .hidden { display: none; }
 
     #login-error, #register-error { color: red; font-size: 0.9rem; }
@@ -116,96 +213,6 @@
       .radio-group, .checkbox-group { flex-direction: column; gap: 0.5rem; }
     }
 
-    /* ---------- Custom multi-select dropdown styles ---------- */
-    .msd {
-      position: relative;
-      width: 100%;
-      max-width: 100%;
-      margin-top: 6px;
-      user-select: none;
-    }
-    .msd-toggle {
-      display: flex;
-      align-items: center;
-      min-height: 44px;
-      padding: 8px 12px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      background: #fff;
-      cursor: pointer;
-      gap: 8px;
-    }
-    .msd-toggle .placeholder { color: #9aa4bf; }
-    .msd-toggle .summary { display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .msd-toggle:focus { outline: none; box-shadow: 0 0 0 4px rgba(37,117,252,0.12); border-color: #2575fc; }
-    .msd-toggle .caret {
-      margin-left: auto;
-      font-size: 12px;
-      color: #6b7280;
-    }
-
-    .msd-menu {
-      position: absolute;
-      top: calc(100% + 8px);
-      left: 0;
-      right: 0;
-      background: #fff;
-      border: 1px solid #e6e9ef;
-      border-radius: 10px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
-      z-index: 50;
-      max-height: 220px;
-      overflow: auto;
-      display: none;
-    }
-    .msd.open .msd-menu { display: block; }
-
-    .msd-search {
-      padding: 8px;
-      border-bottom: 1px solid #f1f3f6;
-      position: sticky;
-      top: 0;
-      background: #fff;
-      z-index: 2;
-    }
-    .msd-search input {
-      width: 100%;
-      padding: 8px;
-      border-radius: 6px;
-      border: 1px solid #e6e9ef;
-    }
-
-    .msd-option {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 9px 12px;
-      cursor: pointer;
-    }
-    .msd-option:hover { background: #f7f8fb; }
-
-    .msd-actions {
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      padding: 8px;
-      border-top: 1px solid #f1f3f6;
-      background: #fff;
-      position: sticky;
-      bottom: 0;
-    }
-    .msd-actions button {
-      padding: 6px 10px;
-      border-radius: 6px;
-      border: 1px solid #e6e9ef;
-      background: #fbfdff;
-      cursor: pointer;
-    }
-    .msd-actions button.primary {
-      background: linear-gradient(135deg,#6a11cb 0%,#2575fc 100%);
-      color: #fff;
-      border: none;
-    }
   </style>
 </head>
 <body>
@@ -253,7 +260,7 @@
       <textarea id="reg-address" rows="3" placeholder="Enter Address"></textarea>
 
       <label>Upload File:</label>
-      <input type="file" id="reg-file">
+      <input type="file" id="reg-file" disabled>
 
       <label>Single-selection Category:</label>
       <select id="reg-category-single">
@@ -262,34 +269,26 @@
         <option value="Other">Other</option>
       </select>
 
-      <label>Multiple-selection Category:</label>
+      
+<label for="dropdown">Multi-select Dropdown</label>
 
-      <!-- Custom multiple-select dropdown (replaces native <select multiple>) -->
-      <div id="reg-category-multi" class="msd" aria-haspopup="listbox">
-        <div id="msd-toggle" class="msd-toggle" tabindex="0" role="button" aria-expanded="false">
-          <span class="placeholder">Select option</span>
-          <span class="summary" style="display:none;"></span>
-          <span class="caret">▾</span>
-        </div>
-
-        <div id="msd-menu" class="msd-menu" role="listbox" aria-multiselectable="true">
-          <div class="msd-search">
-            <input type="text" id="msd-search-input" placeholder="Search…" />
-          </div>
-
-          <label class="msd-option" data-value="Student"><input type="checkbox"> <span>Student</span></label>
-          <label class="msd-option" data-value="Employee"><input type="checkbox"> <span>Employee</span></label>
-          <label class="msd-option" data-value="Other"><input type="checkbox"> <span>Other</span></label>
-
-          <div class="msd-actions">
-            <button type="button" id="msd-clear">Clear</button>
-            <div>
-              <button type="button" id="msd-select-all">Select all</button>
-              <button type="button" id="msd-apply" class="primary">Apply</button>
-            </div>
-          </div>
-        </div>
-      </div>
+<div class="dropdown" id="multiDropdown">
+  <div class="dropdown-toggle" id="dropdownToggle">
+    <div id="selectedTags">Select Items</div>
+    <span class="caret">▾</span>
+  </div>
+  <div class="dropdown-menu" id="dropdownMenu">
+    <div data-value="Books">Books</div>
+    <div data-value="Movies">Movies, Music & Games</div>
+    <div data-value="Electronics">Electronics & Computers</div>
+    <div data-value="Home">Home, Garden & Tools</div>
+    <div data-value="Health">Health & Beauty</div>
+    <div data-value="Toys">Toys, Kids & Baby</div>
+    <div data-value="Clothing">Clothing & Jewelry</div>
+    <div data-value="Sports">Sports & Outdoors</div>
+  </div>
+  <button class="clear-btn" id="clearBtn">Clear All</button>
+</div>
 
       <button type="submit">Register</button>
       <p id="register-error" class="hidden">Passwords do not match</p>
@@ -313,109 +312,6 @@
       { username: "admin", password: "1234" }
     ];
     let currentUser = null;
-
-    // ------------------- Multi-select component -------------------
-    const categoryMultiComponent = (function () {
-      const root = document.getElementById('reg-category-multi');
-      const toggle = document.getElementById('msd-toggle');
-      const menu = document.getElementById('msd-menu');
-      const searchInput = document.getElementById('msd-search-input');
-      const options = Array.from(menu.querySelectorAll('.msd-option'));
-      const placeholder = toggle.querySelector('.placeholder');
-      const summary = toggle.querySelector('.summary');
-      const btnSelectAll = document.getElementById('msd-select-all');
-      const btnClear = document.getElementById('msd-clear');
-      const btnApply = document.getElementById('msd-apply');
-
-      function openMenu() {
-        root.classList.add('open');
-        toggle.setAttribute('aria-expanded', 'true');
-        searchInput.focus();
-      }
-      function closeMenu() {
-        root.classList.remove('open');
-        toggle.setAttribute('aria-expanded', 'false');
-        searchInput.value = '';
-        filterOptions('');
-      }
-
-      // Toggle
-      toggle.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (root.classList.contains('open')) closeMenu(); else openMenu();
-      });
-
-      toggle.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openMenu(); }
-      });
-
-      // Close when clicking outside
-      document.addEventListener('click', (e) => {
-        if (!root.contains(e.target)) closeMenu();
-      });
-      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
-
-      // Search / filter
-      function filterOptions(q) {
-        const query = (q || '').toLowerCase();
-        options.forEach(opt => {
-          const text = opt.textContent.toLowerCase();
-          opt.style.display = text.includes(query) ? 'flex' : 'none';
-        });
-      }
-      searchInput.addEventListener('input', (e) => filterOptions(e.target.value));
-
-      // Option click toggles checkbox
-      options.forEach(opt => {
-        opt.addEventListener('click', (e) => {
-          if (e.target.tagName.toLowerCase() === 'input') return; // let checkbox handle it
-          const cb = opt.querySelector('input[type="checkbox"]');
-          cb.checked = !cb.checked;
-        });
-      });
-
-      // Buttons
-      btnSelectAll.addEventListener('click', () => {
-        options.forEach(o => { if (o.style.display !== 'none') o.querySelector('input').checked = true; });
-      });
-      btnClear.addEventListener('click', () => {
-        options.forEach(o => o.querySelector('input').checked = false);
-        updateSummary();
-      });
-      btnApply.addEventListener('click', () => {
-        updateSummary();
-        closeMenu();
-      });
-
-      function getSelected() {
-        return options
-          .map(o => ({ value: o.getAttribute('data-value'), label: o.querySelector('span').textContent.trim(), checked: o.querySelector('input').checked }))
-          .filter(x => x.checked);
-      }
-
-      function updateSummary() {
-        const sel = getSelected();
-        if (sel.length === 0) {
-          placeholder.style.display = 'inline';
-          summary.style.display = 'none';
-          summary.textContent = '';
-        } else {
-          placeholder.style.display = 'none';
-          summary.style.display = 'inline';
-          const names = sel.map(s => s.label);
-          summary.textContent = names.length <= 2 ? names.join(', ') : `${names.length} selected`;
-        }
-      }
-
-      // expose API
-      return {
-        getSelectedValues: () => getSelected().map(s => s.value),
-        getSelectedLabels: () => getSelected().map(s => s.label),
-        updateSummary: updateSummary,
-        // call to set initial state if needed
-        init: () => updateSummary()
-      };
-    })();
 
     // ------------------- Auth/Register/Login logic -------------------
     function login() {
@@ -460,16 +356,69 @@
       // Single-selection category
       let categorySingle = document.getElementById("reg-category-single").value;
 
-      // Multiple-selection category - get from custom component
-      let categoryMulti = categoryMultiComponent.getSelectedValues();
-
-      users.push({ username: uname, password: pass, gender, courses, dob, address, file, categorySingle, categoryMulti });
-      localStorage.setItem("users", JSON.stringify(users));
-
-      success.classList.remove("hidden");
-      setTimeout(() => success.classList.add("hidden"), 3000);
     }
+    
+      // Multiple-selection category - get from custom component
+      const dropdown = document.getElementById('multiDropdown');
+  const toggle = document.getElementById('dropdownToggle');
+  const menu = document.getElementById('dropdownMenu');
+  const selectedTags = document.getElementById('selectedTags');
+  const clearBtn = document.getElementById('clearBtn');
 
+  let selectedItems = [];
+
+  // Open/close dropdown
+  toggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    dropdown.classList.toggle('open');
+  });
+
+  // Close when clicking outside
+  document.addEventListener('click', () => {
+    dropdown.classList.remove('open');
+  });
+
+  // Select item
+  menu.querySelectorAll('div').forEach(option => {
+    option.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const value = option.dataset.value;
+      if (!selectedItems.includes(value)) {
+        selectedItems.push(value);
+        updateDisplay();
+      }
+    });
+  });
+
+  function updateDisplay() {
+    if (selectedItems.length === 0) {
+      selectedTags.textContent = "Select Items";
+    } else {
+      selectedTags.innerHTML = '';
+      selectedItems.forEach(item => {
+        const tag = document.createElement('div');
+        tag.classList.add('tag');
+        tag.textContent = item;
+
+        const removeBtn = document.createElement('button');
+        removeBtn.textContent = '×';
+        removeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          selectedItems = selectedItems.filter(i => i !== item);
+          updateDisplay();
+        });
+
+        tag.appendChild(removeBtn);
+        selectedTags.appendChild(tag);
+      });
+    }
+  }
+
+  clearBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    selectedItems = [];
+    updateDisplay();
+  });
     function showRegister() {
       document.getElementById("login-container").classList.add("hidden");
       document.getElementById("register-container").classList.remove("hidden");
