@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dropdown Automation Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f8f9fa;
+        }
+        h2 {
+            color: #333;
+        }
+        label {
+            font-weight: bold;
+        }
+        select {
+            width: 220px;
+            padding: 6px;
+            font-size: 16px;
+            margin-top: 5px;
+        }
+        input[type="submit"] {
+            margin-top: 15px;
+            padding: 8px 16px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 4px;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 25px;
+            font-size: 18px;
+            color: #333;
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 6px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Dropdown Automation Demo</h2>
+
+    <form id="dropdownForm">
+        <!-- Fruits Dropdown (Multiple) -->
+        <label for="fruits">Choose your favorite fruits:</label><br>
+        <select id="fruits" name="fruits" multiple size="5">
+            <option value="Apple">Apple</option>
+            <option value="Banana">Banana</option>
+            <option value="Cherry">Cherry</option>
+            <option value="Grape">Grape</option>
+            <option value="Kiwi">Kiwi</option>
+            <option value="Orange">Orange</option>
+        </select>
+
+        <br><br>
+
+        <!-- Vegetables Dropdown (Single) -->
+        <label for="vegetables">Choose your favorite vegetable:</label><br>
+        <select id="vegetables" name="vegetables">
+            <option value="">-- Select a vegetable --</option>
+            <option value="Carrot">Carrot</option>
+            <option value="Beans">Beans</option>
+            <option value="Broccoli">Broccoli</option>
+            <option value="Cabbage">Cabbage</option>
+            <option value="Potato">Potato</option>
+        </select>
+
+        <br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        document.getElementById("dropdownForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Stop page reload
+
+            // Get selected fruits
+            const selectedFruits = Array.from(document.getElementById("fruits").selectedOptions)
+                                        .map(option => option.value);
+
+            // Get selected vegetable
+            const selectedVeg = document.getElementById("vegetables").value;
+
+            // Prepare result text
+            let resultText = "";
+            if (selectedFruits.length > 0) {
+                resultText += "🍎 Selected Fruits: " + selectedFruits.join(", ") + "<br>";
+            } else {
+                resultText += "🍎 No fruit selected.<br>";
+            }
+
+            if (selectedVeg) {
+                resultText += "🥦 Selected Vegetable: " + selectedVeg;
+            } else {
+                resultText += "🥦 No vegetable selected.";
+            }
+
+            // Display results
+            const resultDiv = document.getElementById("result");
+            resultDiv.innerHTML = resultText;
+            resultDiv.style.display = "block";
+        });
+    </script>
+
+</body>
+</html>
