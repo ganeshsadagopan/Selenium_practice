@@ -53,7 +53,8 @@
     input[type="password"],
     input[type="date"],
     textarea,
-    select {
+    select,
+    input[type="file"] {
       padding: 10px;
       border-radius: 8px;
       border: 1px solid #ddd;
@@ -96,103 +97,104 @@
     a:hover {
       text-decoration: underline;
     }
+
     .multi-selectDropdown{
-    margin-bottom: 20px;
-  }
+      margin-bottom: 20px;
+    }
 
-  .dropdown {
-    position: relative;
-    width: 320px;
-  }
+    .dropdown {
+      position: relative;
+      width: 320px;
+    }
 
-  /* Container that looks like input box */
-  .dropdown-toggle {
-    width: 100%;
-    min-height: 40px;
-    padding: 5px 10px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    cursor: pointer;
-    display: flex;
-    flex-wrap: wrap; /* allow multiple tags side by side */
-    align-items: center;
-    gap: 5px;
-    background: #fff;
-    overflow-x: auto;
-  }
+    /* Container that looks like input box */
+    .dropdown-toggle {
+      width: 100%;
+      min-height: 40px;
+      padding: 5px 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 5px;
+      background: #fff;
+      overflow-x: auto;
+    }
 
-  .dropdown-toggle span.caret {
-    margin-left: auto;
-  }
+    .dropdown-toggle span.caret {
+      margin-left: auto;
+    }
 
-  /* Container for tags */
-  #selectedTags {
-    display: flex;
-    flex-wrap: wrap; /* horizontal alignment + wrap if overflow */
-    gap: 5px;
-    align-items: center;
-  }
+    /* Container for tags */
+    #selectedTags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      align-items: center;
+    }
 
-  .tag {
-    background: #2575fc;
-    color: #fff;
-    padding: 3px 7px;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    white-space: nowrap;
-  }
+    .tag {
+      background: #2575fc;
+      color: #fff;
+      padding: 3px 7px;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
 
-  .tag button {
-    background: none;
-    border: none;
-    color: #fff;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 0.9rem;
-  }
+    .tag button {
+      background: none;
+      border: none;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
 
-  .dropdown-menu {
-    position: absolute;
-    top: calc(100% + 5px);
-    width: 100%;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    background: #fff;
-    max-height: 180px;
-    overflow-y: auto;
-    display: none;
-    z-index: 10;
-  }
+    .dropdown-menu {
+      position: absolute;
+      top: calc(100% + 5px);
+      width: 100%;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      background: #fff;
+      max-height: 180px;
+      overflow-y: auto;
+      display: none;
+      z-index: 10;
+    }
 
-  .dropdown.open .dropdown-menu {
-    display: block;
-  }
+    .dropdown.open .dropdown-menu {
+      display: block;
+    }
 
-  .dropdown-menu div {
-    padding: 8px 10px;
-    cursor: pointer;
-  }
+    .dropdown-menu div {
+      padding: 8px 10px;
+      cursor: pointer;
+    }
 
-  .dropdown-menu div:hover {
-    background: #f0f0f0;
-  }
+    .dropdown-menu div:hover {
+      background: #f0f0f0;
+    }
 
-  .clear-btn {
-    margin-top: 10px;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 5px;
-    background: #ff4b5c;
-    color: #fff;
-    cursor: pointer;
-  }
+    .clear-btn {
+      margin-top: 10px;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
+      background: #ff4b5c;
+      color: #fff;
+      cursor: pointer;
+    }
 
-  .clear-btn:hover {
-    background: #e63946;
-  }
+    .clear-btn:hover {
+      background: #e63946;
+    }
     .hidden { display: none; }
 
     #login-error, #register-error { color: red; font-size: 0.9rem; }
@@ -259,8 +261,9 @@
       <label>Address:</label>
       <textarea id="reg-address" rows="3" placeholder="Enter Address"></textarea>
 
+      <!-- File input fixed for Selenium -->
       <label>Upload File:</label>
-      <input type="file" id="reg-file">
+      <input type="file" id="reg-file" style="position: relative; z-index: 20; margin-bottom: 15px;">
 
       <label>Single-selection Category:</label>
       <select id="reg-category-single">
@@ -356,108 +359,121 @@
       // Single-selection category
       let categorySingle = document.getElementById("reg-category-single").value;
 
+      // Multiple-selection category - get from custom component
+      let categoryMulti = selectedItems;
+
+      let newUser = {
+        username: uname,
+        password: pass,
+        gender,
+        courses,
+        dob,
+        address,
+        file,
+        categorySingle,
+        categoryMulti
+      };
+
+      users.push(newUser);
+      localStorage.setItem("users", JSON.stringify(users));
+      success.classList.remove("hidden");
+      document.querySelector("#register-container form").reset();
+      selectedItems = [];
+      updateDisplay();
     }
     
-      // Multiple-selection category - get from custom component
+      // Multiple-selection category component
       const dropdown = document.getElementById('multiDropdown');
-  const toggle = document.getElementById('dropdownToggle');
-  const menu = document.getElementById('dropdownMenu');
-  const selectedTags = document.getElementById('selectedTags');
-  const clearBtn = document.getElementById('clearBtn');
+      const toggle = document.getElementById('dropdownToggle');
+      const menu = document.getElementById('dropdownMenu');
+      const selectedTags = document.getElementById('selectedTags');
+      const clearBtn = document.getElementById('clearBtn');
 
-  let selectedItems = [];
+      let selectedItems = [];
 
-  // Open/close dropdown
-  toggle.addEventListener('click', (e) => {
-    e.stopPropagation();
-    dropdown.classList.toggle('open');
-  });
-
-  // Close when clicking outside
-  document.addEventListener('click', () => {
-    dropdown.classList.remove('open');
-  });
-
-  // Select item
-  menu.querySelectorAll('div').forEach(option => {
-    option.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const value = option.dataset.value;
-      if (!selectedItems.includes(value)) {
-        selectedItems.push(value);
-        updateDisplay();
-      }
-    });
-  });
-
-  function updateDisplay() {
-    if (selectedItems.length === 0) {
-      selectedTags.textContent = "Select Items";
-    } else {
-      selectedTags.innerHTML = '';
-      selectedItems.forEach(item => {
-        const tag = document.createElement('div');
-        tag.classList.add('tag');
-        tag.textContent = item;
-
-        const removeBtn = document.createElement('button');
-        removeBtn.textContent = '×';
-        removeBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          selectedItems = selectedItems.filter(i => i !== item);
-          updateDisplay();
-        });
-
-        tag.appendChild(removeBtn);
-        selectedTags.appendChild(tag);
+      toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle('open');
       });
-    }
-  }
 
-  clearBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    selectedItems = [];
-    updateDisplay();
-  });
-    function showRegister() {
-      document.getElementById("login-container").classList.add("hidden");
-      document.getElementById("register-container").classList.remove("hidden");
-      // ensure msd summary is correct when showing form
-      categoryMultiComponent.updateSummary?.();
-    }
+      document.addEventListener('click', () => {
+        dropdown.classList.remove('open');
+      });
 
-    function showLogin() {
-      document.getElementById("register-container").classList.add("hidden");
-      document.getElementById("login-container").classList.remove("hidden");
-    }
+      menu.querySelectorAll('div').forEach(option => {
+        option.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const value = option.dataset.value;
+          if (!selectedItems.includes(value)) {
+            selectedItems.push(value);
+            updateDisplay();
+          }
+        });
+      });
 
-    function showHome() {
-      document.getElementById("login-container").classList.add("hidden");
-      document.getElementById("register-container").classList.add("hidden");
-      document.getElementById("home-container").classList.remove("hidden");
+      function updateDisplay() {
+        if (selectedItems.length === 0) {
+          selectedTags.textContent = "Select Items";
+        } else {
+          selectedTags.innerHTML = '';
+          selectedItems.forEach(item => {
+            const tag = document.createElement('div');
+            tag.classList.add('tag');
+            tag.textContent = item;
 
-      let profile = `
-        <strong>Username:</strong> ${currentUser.username}<br>
-        <strong>Gender:</strong> ${currentUser.gender || "-"}<br>
-        <strong>Courses:</strong> ${currentUser.courses?.join(", ") || "-"}<br>
-        <strong>DOB:</strong> ${currentUser.dob || "-"}<br>
-        <strong>Address:</strong> ${currentUser.address || "-"}<br>
-        <strong>Single Category:</strong> ${currentUser.categorySingle || "-"}<br>
-        <strong>Multiple Categories:</strong> ${currentUser.categoryMulti?.join(", ") || "-"}<br>
-        <strong>File:</strong> ${currentUser.file || "None"}
-      `;
-      document.getElementById("profile").innerHTML = profile;
-    }
+            const removeBtn = document.createElement('button');
+            removeBtn.textContent = '×';
+            removeBtn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              selectedItems = selectedItems.filter(i => i !== item);
+              updateDisplay();
+            });
 
-    function logout() {
-      currentUser = null;
-      document.getElementById("home-container").classList.add("hidden");
-      document.getElementById("login-container").classList.remove("hidden");
-    }
+            tag.appendChild(removeBtn);
+            selectedTags.appendChild(tag);
+          });
+        }
+      }
 
-    // init component summary (in case user returns to registration)
-    window.addEventListener('DOMContentLoaded', () => categoryMultiComponent.init());
+      clearBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        selectedItems = [];
+        updateDisplay();
+      });
+
+      function showRegister() {
+        document.getElementById("login-container").classList.add("hidden");
+        document.getElementById("register-container").classList.remove("hidden");
+      }
+
+      function showLogin() {
+        document.getElementById("register-container").classList.add("hidden");
+        document.getElementById("login-container").classList.remove("hidden");
+      }
+
+      function showHome() {
+        document.getElementById("login-container").classList.add("hidden");
+        document.getElementById("register-container").classList.add("hidden");
+        document.getElementById("home-container").classList.remove("hidden");
+
+        let profile = `
+          <strong>Username:</strong> ${currentUser.username}<br>
+          <strong>Gender:</strong> ${currentUser.gender || "-"}<br>
+          <strong>Courses:</strong> ${currentUser.courses?.join(", ") || "-"}<br>
+          <strong>DOB:</strong> ${currentUser.dob || "-"}<br>
+          <strong>Address:</strong> ${currentUser.address || "-"}<br>
+          <strong>Single Category:</strong> ${currentUser.categorySingle || "-"}<br>
+          <strong>Multiple Categories:</strong> ${currentUser.categoryMulti?.join(", ") || "-"}<br>
+          <strong>File:</strong> ${currentUser.file || "None"}
+        `;
+        document.getElementById("profile").innerHTML = profile;
+      }
+
+      function logout() {
+        currentUser = null;
+        document.getElementById("home-container").classList.add("hidden");
+        document.getElementById("login-container").classList.remove("hidden");
+      }
   </script>
 </body>
 </html>
-
